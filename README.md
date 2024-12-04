@@ -1,14 +1,16 @@
+This service is supposed to recommend using or not using some cryptocurrencies based on provided csv files,
+but the decision is always up to user, then this service is not responsible for financial 
+losses of any user.  
 Initially, once the application is started, configuration file loads pre-saved existing values
-(provided in the test task description, path is /src/main/resources/init_csv), in the current
+(provided in the task description, path is /src/main/resources/init_csv), in the current
 version - these price files are treated as absolute truth and during uploading new files
 you will not be able to rewrite these values, so the whole situation about files - choose wisely.
-As expansion plans for the service
+As possible improvement plan for the service
 1. Adding functionality of live fetching data from crypto markets
 like Binance or ByBit or whatever, and then allowing user to compare uploaded data with data from service
 and giving an ability to choose which one is source of truth
 2. Adding any basic authentication to avoid using some random library from GitHub for restricting endpoint 
-rate limit. And a user model based on subscription principals to control rate limit 
-(e.g., 100 requests/min - 5 USDT, 200 requests/min - 10 USDT)  
+rate limit and a user model to provide any personal advice
 3. Add some math here - at least basic models like AutoRegression, Moving Average, SARMA etc. or even 
 some custom neural networks
 4. Adjust and improve load tests
@@ -48,5 +50,7 @@ and run \
 <mark>docker-compose --env-file .env up </mark>
 \
 Important Note - tests are disabled during docker image building because tests are using test containers,
-which require docker. So, the situation like in that film with Leo DiCaprio - dream level inside dream level.
+which require docker.
+So, the situation like in that film with Leo DiCaprio - dream level inside dream level.\
+Thank you for your time!
 
