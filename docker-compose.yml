@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: .
+    environment:
+      ENV_DB_HOST: ${ENV_DB_HOST}
+      ENV_DB_PORT: ${ENV_DB_PORT}
+      ENV_DB_NAME: ${ENV_DB_NAME}
+      ENV_DB_USERNAME: ${ENV_DB_USERNAME}
+      ENV_DB_PASSWORD: ${ENV_DB_PASSWORD}
+      CSV_FILE_PATH: ${CSV_FILE_PATH}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
