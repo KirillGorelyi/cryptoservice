@@ -12,6 +12,7 @@ import com.epam.cryptoservice.schema.entity.PriceEntity;
 import com.epam.cryptoservice.service.CalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CalculationServiceImpl implements CalculationService {
@@ -79,10 +81,12 @@ public class CalculationServiceImpl implements CalculationService {
                                                      LocalDate endDate)
             throws CoinISNotPresentInSystemException {
         Long coinId = fetchCoinId(coin);
-        Long startTimestamp =
-                startDate.atStartOfDay(ZoneId.systemDefault()).toInstant().getEpochSecond();
-        Long endTimestamp =
-                endDate.atStartOfDay(ZoneId.systemDefault()).toInstant().getEpochSecond();
+        Long startTimestamp = getDateAccordingFormat(startDate);
+        Long endTimestamp = getDateAccordingFormat(endDate);
+        log.info("coinId {}", coinId);
+        log.info("startTimestamp {}", startTimestamp);
+        log.info("endTimestamp {}", endTimestamp);
+
         PriceEntity oldestPrice;
         PriceEntity newestPrice;
         PriceEntity minPrice;
@@ -92,19 +96,24 @@ public class CalculationServiceImpl implements CalculationService {
                     coinId,
                     startTimestamp,
                     endTimestamp);
+            log.info("oldest price {}", oldestPrice);
             newestPrice = priceRepositoryService.findNewestPriceByCoin(
                     coinId,
                     startTimestamp,
                     endTimestamp);
+            log.info("newest price {}", oldestPrice);
             minPrice = priceRepositoryService.findMinPriceByCoin(
                     coinId,
                     startTimestamp,
                     endTimestamp);
+            log.info("min price {}", oldestPrice);
             maxPrice = priceRepositoryService.findMaxPriceByCoin(
                     coinId,
                     startTimestamp,
                     endTimestamp);
+            log.info("max price {}", oldestPrice);
         }
+
 
         if (oldestPrice == null && newestPrice == null && minPrice == null && maxPrice == null)
             return null;
@@ -114,11 +123,8 @@ public class CalculationServiceImpl implements CalculationService {
     }
 
     public CoinNormalizedRangeDto getCoinWithHighestNormalizedRangeForDay(LocalDate date) {
-        Instant startOfDay = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        Instant endOfDay = date.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
-
-        Long startTimestamp = startOfDay.getEpochSecond();
-        Long endTimestamp = endOfDay.getEpochSecond() - 1;
+        Long startTimestamp = getDateAccordingFormat(date);
+        Long endTimestamp = getDateAccordingFormat(date.plusDays (1)) - 1000;
 
         List<CoinPriceStatsDto> coinPriceStats;
         synchronized (lock) {
@@ -200,5 +206,9 @@ public class CalculationServiceImpl implements CalculationService {
         }
         if (coinEntity == null) throw new CoinISNotPresentInSystemException();
         return coinEntity.getId();
+    }
+
+    private Long getDateAccordingFormat(LocalDate localDate){
+        return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().getEpochSecond()*1000;
     }
 }

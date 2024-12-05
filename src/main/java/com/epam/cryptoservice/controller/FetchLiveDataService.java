@@ -1,5 +1,5 @@
-package com.epam.cryptoservice.controller.impl;
+package com.epam.cryptoservice.controller;
 
-public class FetchLiveDataServiceImpl {
+public class FetchLiveDataService {
     //TODO: implement fetching real time crypto data from binance/bybit/any other api
 }
